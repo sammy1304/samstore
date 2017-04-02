@@ -3,6 +3,9 @@
 	      # title
 		  $page_title = "login";
 
+		  # load db connection
+		  include ('includes/db.php');
+
 		  	# include  header
 			include ('includes/header.php');
 
