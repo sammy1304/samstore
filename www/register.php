@@ -5,14 +5,18 @@
 
      # load db connection
      include ('includes/db.php');
+
+     # load functions
+     include ('includes/function.php');
      
      # include header
      include ('includes/header.php');
 
-    if(array_key_exists('register', $_POST)) {
+ 
 
      	# cache errors
-     	$errors = [];
+    if(array_key_exists('register', $_POST)) {
+    	$errors = [];
 
      	# validate first name
      	if(empty($_POST['fname'])) {
@@ -25,6 +29,10 @@
 
      	if(empty($_POST['email'])) {
      		$errors['email'] = "please enter an email";
+     	}
+
+     	if(doesEmailExist($conn, $_POST['email'])) {
+     		$errors['email'] = "email already exists";
      	}
 
      	if(empty($_POST['password'])) {
@@ -40,12 +48,15 @@
 
      		# eliminate unwanted spaces from values in the $_POST array
      		$clean = array_map('trim', $_POST);
+     		
+     		# register admin
+     		doAdminRegister($conn,$clean);
 
-     		# hash the password
+     	 /*	# hash the password
 			$hash = password_hash($clean['password'], PASSWORD_BCRYPT);   
 
 			# insert data(
-						$stmt = $conn->prepare("INSERT INTO Admin(firstname, lastname, email, hash) VALUES(:fn, :ln, :e, :h)"); 
+						$stmt = $conn->prepare("INSERT INTO admin(firstname, lastname, email, hash) VALUES(:fn, :ln, :e, :h)"); 
 
 			# bind params....
 			$data = [
@@ -56,7 +67,7 @@
 
 			];
 
-			$stmt->execute($data);
+			$stmt->execute($data);*/
 
      	}
 
@@ -69,14 +80,18 @@
 		<form id="register"  action ="register.php" method ="POST">
 			<div>
 				<?php
-					 if(isset($errors['fname'])) { echo '<span class="err">'. $errors['fname']. '</span>'; }					
+					 //if(isset($errors['fname'])) { echo '<span class="err">'. $errors['fname']. '</span>'; }
+					 $display = displayErrors($errors, 'fname');
+					 echo $display;					
 				?>
 				<label>first name:</label>
 				<input type="text" name="fname" placeholder="first name">
 			</div>
 			<div>
 			    <?php
-				    if(isset($errors['lname'])) { echo '<span class="err">'. $errors['lname']. '</span>'; }
+				   // if(isset($errors['lname'])) { echo '<span class="err">'. $errors['lname']. '</span>'; }
+			    $display = displayErrors($errors, 'lname');
+			    echo $display;
 				?>
 				<label>last name:</label>	
 				<input type="text" name="lname" placeholder="last name">
@@ -84,14 +99,20 @@
 
 			<div>
 			    <?php
-				     if(isset($errors['email'])) { echo '<span class="err">'.$errors['email']. '</span>'; }
+				    // if(isset($errors['email'])) { echo '<span class="err">'.$errors['email']. '</span>'; }
+
+			    $display = displayErrors($errors, 'email');
+			     echo $display;
 			    ?>
 				<label>email:</label>
 				<input type="text" name="email" placeholder="email">
 			</div>
 			<div>
 			    <?php 
-			     	   if(isset($errors['password'])) { echo '<span class="err">'. $errors['password']. '</span>'; }
+			     	 //  if(isset($errors['password'])) { echo '<span class="err">'. $errors['password']. '</span>'; }
+
+			    $display = displayErrors($errors, 'password');
+			      echo $display;
 			    ?>
 
 				<label>password:</label>
@@ -101,7 +122,9 @@
 			<div>
 
 			     <?php 
-			          if (isset($errors['pword'])) { echo '<span class="err">'. $errors['pword'].'</span>'; }
+			          //if (isset($errors['pword'])) { echo '<span class="err">'. $errors['pword'].'</span>'; }
+			     $display = displayErrors($errors, 'pword');
+			        echo $display;
 			     ?>
 				<label>confirm password:</label>	
 				<input type="password" name="pword" placeholder="password">
